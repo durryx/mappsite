@@ -11,35 +11,45 @@ Test & Debug : `nosetests tests`
 - [ ] update tree data structure when new valid link is found
 - [ ] store result in file (after ^C)
 - [ ] how to write documentation in `/docs` 
+- [ ] automatic, timeout and manuel mode
 
 flow control
 ```mermaid
-stateDiagram-v2
-    [mappsite] --> nvlc
-    state nvlc {
-				 data: ffprobe (get video info)
-				 ffmpeg: ffmpeg (extract frames)
-				 time: increment video time
-       	[*] --> data
-				[*] --> ffmpeg
-        ffmpeg --> time : pass parameters
-        time --> ffmpeg : cache
-        --
-				init: init /cache
-				join: dealloc & join
-				state B {
-      	direction LR
-				del: rm IMG*
-				next: next IMG*++
-      	jp2a --> del : print IMG* to stdout
-				del --> next
-				next --> jp2a
-    		}
-        [*] --> init
-				init --> bar.sh : wait for other process to init
-				bar.sh --> B
-				B --> join
-				join --> [*]
+stateDiagram-v2    
+    
+    mappsite --> mode1
+    mappsite --> mode2
+    mappsite --> mode3
+
+    mode1: automatic mode
+    bruteforce1: iterate over X char string
+    mode2: timeout mode
+    mode3: manual mode
+    
+    state bruteforce1 {
+      	[*] --> A{establish connection}
+      	A --> B[webpage exists**]
+      	B --> C[save to tree]
+      	A --> D[else** - skip ]
+    }
+    
+    state mode1 {
+    
+        bruteforce1 --> timeout{if timeout has expired}
+        timeout -. no .-> A[explore nested links]
+        A --> bruteforce1
+        timeout -. yes .-> [*]
+    }
+    
+    state mode2 {
+    
+    
+    }
+    
+    state mode3 {
+    
+    
+    
     }
 ```
 
