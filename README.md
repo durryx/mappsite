@@ -15,7 +15,7 @@ Test & Debug : `nosetests tests`
 flow control
 ```mermaid
 stateDiagram-v2
-    [*] --> nvlc
+    [mappsite] --> nvlc
     state nvlc {
 				 data: ffprobe (get video info)
 				 ffmpeg: ffmpeg (extract frames)
