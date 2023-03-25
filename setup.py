@@ -6,7 +6,7 @@ with open('README.md') as f:
 setup(
     name='mappsite',
     version='0.1.0',
-    description='Sample package for Python-Guide.org',
+    description='provide the tree hierarchical view of a given website',
     long_description=readme,
     author='Giovanni Durante',
     author_email='giovanni3durante@gmail.com',
