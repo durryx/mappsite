@@ -15,42 +15,37 @@ Test & Debug : `nosetests tests`
 
 flow control
 ```mermaid
-stateDiagram-v2    
-    
-    mappsite --> mode1
-    mappsite --> mode2
-    mappsite --> mode3
+flowchart TD
 
-    mode1: automatic mode
-    bruteforce1: iterate over X char string
-    mode2: timeout mode
-    mode3: manual mode
-    
-    state bruteforce1 {
-      	[*] --> A{establish connection}
-      	A --> B[webpage exists**]
-      	B --> C[save to tree]
-      	A --> D[else** - skip ]
-    }
-    
-    state mode1 {
-    
-        bruteforce1 --> timeout{if timeout has expired}
-        timeout -. no .-> A[explore nested links]
-        A --> bruteforce1
-        timeout -. yes .-> [*]
-    }
-    
-    state mode2 {
-    
-    
-    }
-    
-    state mode3 {
-    
-    
-    
-    }
+  subgraph mode1[automatic mode]
+    direction TB
+    subgraph A1[iterate over X char string]
+        direction TB
+        A[establish connection]
+      	A --> B{webpage exists**} -->|yes| C[(save to tree)] --> A
+      	B -->|no| D[skip**] --> A
+    end
+
+        A1 --> timeout{timeout expired}
+        timeout -. no .-> E[explore nested links]
+        E --> A1
+        timeout -. yes .-> q[fa:fa-circle]
+
+  end
+
+  subgraph mode2[timeout mode]
+    direction TB
+
+  end
+
+  subgraph mode3[manual mode]
+    direction TB
+
+  end
+
+  i[/init/] --> mode1 --> o[fa:fa-circle]
+  i[/init/] --> mode2 --> o[fa:fa-circle]
+  i[/init/] --> mode3 --> o[fa:fa-circle]
 ```
 
 ## Images
