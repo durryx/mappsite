@@ -6,12 +6,12 @@ mappsite has the target to provide the hierarchical structure of a given website
 Run mappsite package from / : `python -m mappsite`
 Test & Debug : `nosetests tests`
 
-- [ ] connect function checking whether the resources exist
-- [ ] get std input form command line
+- [ ] connect function checking whether the resources exist https://stackoverflow.com/questions/16778435/python-check-if-website-exists
+- [ ] get std input form command line see https://towardsdatascience.com/a-simple-guide-to-command-line-arguments-with-argparse-6824c30ab1c3
 - [ ] update tree data structure when new valid link is found
 - [ ] store result in file (after ^C)
 - [ ] how to write documentation in `/docs` 
-- [ ] automatic, timeout and manuel mode
+- [ ] automatic, timeout and manual mode
 
 flow control
 ```mermaid
