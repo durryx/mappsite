@@ -19,7 +19,7 @@ def test_connection(website, dir_string, tree_structure):
     # 2xx - success
     # 3xx - redirection
     # 4xx - client error and so on with errors
-    if not response.status_code < 400:
+    if response.status_code >= 400:
         return False
 
     # check redirections' status if they exist and save them -- error for invalid redirections
