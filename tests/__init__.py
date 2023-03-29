@@ -1,10 +1,15 @@
 import unittest
-from .context import mappsite
+from .context import *
+
+
+def test_connection():
+    print("test_connection with http://httpbin.org/relative-redirect/3 , no tree appending")
+    url = "http://httpbin.org"
+    mappsite.helpers.test_connection(url, "relative-redirect/2", None)
+    # self.assertEqual(True, False)  # add assertion here
 
 class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        print("ciao qua eseguo i testi quindi metti gli script")
-        self.assertEqual(True, False)  # add assertion here
+    pass
 
 
 if __name__ == '__main__':
