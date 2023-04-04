@@ -1,9 +1,9 @@
 import requests as rq
 import copy
-import treelib
+import treelib as tr
 
 # return a boolean and a optional redirection tree
-def test_connection(website, dir_string, tree_structure):
+def test_connection(website:str, dir_string:str, tree_structure:tr.Tree):
     # check if dir_string is a valid link for website
     # website form = "htttp://www.urltest.domain"
     # dir_string form = "directory_name" 
@@ -47,28 +47,68 @@ def tree_append(tree_structure, sub_dir, dir_string):
 
 
 def load_batch(file, index, stride):
-    # open file
-    # slide to index line/char of file
-    # save var with stride size the words and return by reference
+    # tries to open the file
+    try:
+        with open(file,"r") as f:
+            # reads lines between index and index+stride
+            for _ in range(index):
+                next(file)
+            batch = [next(file) for _ in range(stride)]
+        return batch
+    except FileNotFoundError:
+        print("\nCan't find the file")
+        return False
+    finally:
+        print("\nFile does not exist")
+        return False
 
 
-def dictionary_attack(parent, file, tree_structure):
+def dictionary_attack(parent:tr.Tree, file:str, tree_structure:tr.Tree):
+    # inizialize stride to a default value of 2000
+    stride:int = 2000
     # inizialize var with first batch of a file - load_batch
+    batch:list = load_batch(file, index, stride)
+    # check if batch is loaded correctly
+    if batch:
+        print("\nBatch laoded correctly")
+    else:
+        print("\nAn error occured while loading the new batch")
+        return False
+
+    # number of correct url found
+    c_url = 0
 
     # condition True
     # while condition
         # for word in batch
             # res = test_connection(parent, word, tree_structure)
-            # tree_append(res)
-
-        # if batch has ended
-            # condition False
-
+            # tree_append(res) ------ in reality this part is not necessary cause if the found the url is already appended in "test_connection()"
+    while True:
+        for index,word in enumerate(batch):
+            # parent.data takes the used payload associated by the user to the node id
+            # word[:-1] is necessary cause it has a "\n" on the end
+            if test_connection(parent.data, word[:-1], tree_structure) is True:
+                print(f"\nNew dir found: {parent.data}/{word}")
+                c_url += 1
+            
+        # ask the user if he wants to load a new batch
+        res = input(f"\nFound {c_url} correct links.\n Would you like to load a new batch? y/n")
+        if res == "y" or res == "yes":
+            batch = load_batch(file, index, stride)
+            if batch:
+                print("\nBatch laoded correctly")
+            else:
+                return False
+        else:
+            break
+        
+    return True
 
 def handle_user_input():
     # while True:
         # print and get relevant info
         # check if thread has joined
+    pass
 
 def automatic_mode(website, file, tree_structure):
     # initialize list with / website
@@ -79,15 +119,18 @@ def automatic_mode(website, file, tree_structure):
             # handle_user_input()
             # threads joined
         # list = select elements with max depth from tree
+    pass
 
 # to reimplement iteratively TO-FIX
 def gen_list(paths_list, length, string):
-    if length == 0:
+    #if length == 0:
         # for char in char_dictionary:
             # append to paths_list string + char
-    else:
+    #else:
         # for char in char_dictionary:
             # gen_list(paths_list, length-1, string + char)
+    pass
+        
 
 def bruteforce_attack(parent, tree_structure, paths_list, depth):
     # given the cardinality of char_dictionary C
@@ -115,3 +158,4 @@ def bruteforce_mode(website, tree_structure):
             # handle_user_input()
             # threads joined
         # url_list = last elements of maximum depth in tree
+        pass
