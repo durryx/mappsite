@@ -1,6 +1,7 @@
 import requests as rq
 import copy
 import treelib as tr
+import concurrent.futures as th
 
 
 # return a boolean and a optional redirection tree
@@ -114,23 +115,27 @@ def dictionary_attack(tree_structure: tr.Tree, parent: tr.Node, file: str):
     return True
 
 
-def handle_user_input():
+def handle_user_input(thread_pool):
     # while True:
     # print and get relevant info
-    # check if thread has joined
+    # check if thread has joined with thread_pool.shutdown(wait=True)
     pass
 
 
-def automatic_mode(website, file, tree_structure):
-    # initialize list with / website
+def automatic_mode(website, file, tree_structure: tr.Tree):
+    iter_links = [ tree_structure.root ]
+    depth = 0
+    # check_depth = lambda x,y: tree_structure.depth(x) == y
 
-    # while True
-        # for link in list
-            # launch thread with dictionary_attack with link
-            # handle_user_input()
-            # threads joined
-        # list = select elements with max depth from tree
-    pass
+    while True:
+        # find a way to check which node exploration has started, max_workers has to be benchmarked
+        dictionary_pool = th.ThreadPoolExecutor(max_workers=10)
+        for node in iter_links:
+            dictionary_pool.submit(dictionary_attack, tree_structure, node, file)
+        handle_user_input()
+        iter_links = iter(tree_structure.filter_nodes( lambda x: tree_structure.depth(x) == depth ))
+        depth += 1
+
 
 
 # to reimplement iteratively TO-FIX
