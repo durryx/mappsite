@@ -125,14 +125,14 @@ def handle_user_input(thread_pool):
 def automatic_mode(website, file, tree_structure: tr.Tree):
     iter_links = [ tree_structure.root ]
     depth = 0
-    # check_depth = lambda x,y: tree_structure.depth(x) == y
+    # lambda definition check_depth = lambda x,y: tree_structure.depth(x) == y
 
     while True:
         # find a way to check which node exploration has started, max_workers has to be benchmarked
         dictionary_pool = th.ThreadPoolExecutor(max_workers=10)
         for node in iter_links:
             dictionary_pool.submit(dictionary_attack, tree_structure, node, file)
-        handle_user_input()
+        handle_user_input(dictionary_pool)
         iter_links = iter(tree_structure.filter_nodes( lambda x: tree_structure.depth(x) == depth ))
         depth += 1
 
