@@ -1,22 +1,12 @@
 import requests as rq
 import copy
 import treelib as tr
-import concurrent.futures as th
-import sys
-
-sys.setrecursionlimit(5000)
-STRIDE = 2000
-MAX_THRD = 10
-
-
-def log():
-    pass
 
 
 def test_connection(website: str, dir_string: str):
     # check if dir_string is a valid link for website
     # website form = "htttp://www.urltest.domain"
-    # dir_string form = "directory_name" 
+    # dir_string form = "directory_name"
 
     website = r"{}".format(website)
     dir_string = r"{}".format(dir_string)
@@ -51,131 +41,24 @@ def test_connection(website: str, dir_string: str):
     return [True, temp_tree]
 
 
-def tree_append(tree_structure, sub_dir, dir_string):
-    # append dir_string as a valid resource to sub_dir in tree_structure
-    # or append small tree to node
-    return
-
-
-def load_batch(file, index):
-    try:
-        with open(file, "r") as f:
-            # reads lines between index and index+stride
-            for _ in range(index):
-                next(file)
-            batch = [next(file) for _ in range(STRIDE)]
-        return batch
-    except FileNotFoundError:
-        print("\nCan't find the file")
-        return False
-    finally:
-        print("\nFile does not exist")
-        return False
-
-# return full link string given node
-def link_cat(tree_structure: tr.Tree, node: tr.Node, link: str):
+def link_cat(website_fs: tr.Tree, node: tr.Node, link: str):
     if node.is_root():
         return link
     else:
-        prev_node_id = node.predecessor(tree_structure.identifier)
-        prev_node =  tree_structure.get_node(prev_node_id)
+        prev_node_id = node.predecessor(website_fs.identifier)
+        prev_node = website_fs.get_node(prev_node_id)
         link = prev_node.tag + '/' + link
-        return link_cat(tree_structure, prev_node, link)
+        return link_cat(website_fs, prev_node, link)
 
 
-def dictionary_attack(tree_structure: tr.Tree, parent: tr.Node, file: str):
-    index, success = 0, 0
-    batch: list = load_batch(file, index)
-
-    if batch:
-        print("\nBatch laoded correctly")
-    else:
-        print("\nAn error occured while loading the new batch")
-        return False
-
-    partial_link = link_cat(tree_structure, parent, "")
-
-    while True:
-        for index, word in enumerate(batch):
-            # parent.data takes the used payload associated by the user to the node id
-            # word[:-1] is necessary because it has a "\n" on the end
-            outcome, red_tree = test_connection(partial_link, word[:-1], tree_structure)
-
-            if red_tree is not None:
-                # tree_append
-            elif outcome:
-                print(f"\nNew dir found: {parent.data}/{word}")
-                success += 1
-                # tree_append()
-
-        index += STRIDE
-        batch = load_batch(file, index, STRIDE)
-        if batch:
-            print("\nBatch loaded correctly")
-        else:
-            return False
-
-    return True
-
-
-def handle_user_input(thread_pool):
+def handle_user_input(self, thread_pool):
     # while True:
-    # print and get relevant info
-    # check if thread has joined with thread_pool.shutdown(wait=True)
+        # print and get relevant info
+        # check if thread has joined with thread_pool.shutdown(wait=True)
     pass
 
 
-def automatic_mode(website, file, tree_structure: tr.Tree):
-    iter_links = [ tree_structure.root ]
-    depth = 0
-    # lambda definition check_depth = lambda x,y: tree_structure.depth(x) == y
-
-    while True:
-        # find a way to check which node exploration has started, max_workers has to be benchmarked
-        dictionary_pool = th.ThreadPoolExecutor(max_workers=MAX_THRD)
-        for node in iter_links:
-            dictionary_pool.submit(dictionary_attack, tree_structure, node, file)
-        handle_user_input(dictionary_pool)
-        iter_links = iter(tree_structure.filter_nodes( lambda x: tree_structure.depth(x) == depth ))
-        depth += 1
-
-
-
-# to reimplement iteratively TO-FIX
-def gen_list(paths_list, length, string):
-    # if length == 0:
-        # for char in char_dictionary:
-            # append to paths_list string + char
-    # else:
-    # for char in char_dictionary:
-    # gen_list(paths_list, length-1, string + char)
-    pass
-
-
-def bruteforce_attack(parent, tree_structure, paths_list, depth):
-    # given the cardinality of char_dictionary C
-    # given max paths length path_limit
-
-    # if depth == path_limit:
-    # return
-
-    # inc = C ** (path_limit - depth)
-    # for i in range C ** depth
-    # index = i*inc - 1
-    # path = paths_list[index][:depth]
-    # test_connection(parent, path, tree_structure)
-
-    bruteforce_attack(parent, tree_structure, paths_list, depth + 1)
-
-
-def bruteforce_mode(website, tree_structure):
-    # initialize url_list with / website
-    # initialize paths_list -- gen_list
-
-    # while True
-    # for url in url_list
-    # launch thread bruteforce_attack(url, tree_structure, paths_list, 0)
-    # handle_user_input()
-    # threads joined
-    # url_list = last elements of maximum depth in tree
-    pass
+def tree_append(website_fs: tr.Tree, sub_dir, dir_string):
+    # append dir_string as a valid resource to sub_dir in website_fs
+    # or append small tree to node
+    return
