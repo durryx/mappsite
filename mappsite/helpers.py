@@ -2,15 +2,22 @@ import requests as rq
 import copy
 import treelib as tr
 import concurrent.futures as th
+import sys
+
+sys.setrecursionlimit(5000)
+STRIDE = 2000
+MAX_THRD = 10
 
 
-# return a boolean and a optional redirection tree
+def log():
+    pass
+
+
 def test_connection(website: str, dir_string: str):
     # check if dir_string is a valid link for website
     # website form = "htttp://www.urltest.domain"
     # dir_string form = "directory_name" 
 
-    # makes the srings raw
     website = r"{}".format(website)
     dir_string = r"{}".format(dir_string)
     full_url = f"{website}/{dir_string}"
@@ -50,14 +57,13 @@ def tree_append(tree_structure, sub_dir, dir_string):
     return
 
 
-def load_batch(file, index, stride):
-    # tries to open the file
+def load_batch(file, index):
     try:
         with open(file, "r") as f:
             # reads lines between index and index+stride
             for _ in range(index):
                 next(file)
-            batch = [next(file) for _ in range(stride)]
+            batch = [next(file) for _ in range(STRIDE)]
         return batch
     except FileNotFoundError:
         print("\nCan't find the file")
@@ -78,12 +84,9 @@ def link_cat(tree_structure: tr.Tree, node: tr.Node, link: str):
 
 
 def dictionary_attack(tree_structure: tr.Tree, parent: tr.Node, file: str):
-    # inizialize stride to a default value of 2000
-    stride: int = 2000
     index, success = 0, 0
-    # inizialize var with first batch of a file - load_batch
-    batch: list = load_batch(file, index, stride)
-    # check if batch is loaded correctly
+    batch: list = load_batch(file, index)
+
     if batch:
         print("\nBatch laoded correctly")
     else:
@@ -105,10 +108,10 @@ def dictionary_attack(tree_structure: tr.Tree, parent: tr.Node, file: str):
                 success += 1
                 # tree_append()
 
-
-        batch = load_batch(file, index+stride, stride)
+        index += STRIDE
+        batch = load_batch(file, index, STRIDE)
         if batch:
-            print("\nBatch laoded correctly")
+            print("\nBatch loaded correctly")
         else:
             return False
 
@@ -129,7 +132,7 @@ def automatic_mode(website, file, tree_structure: tr.Tree):
 
     while True:
         # find a way to check which node exploration has started, max_workers has to be benchmarked
-        dictionary_pool = th.ThreadPoolExecutor(max_workers=10)
+        dictionary_pool = th.ThreadPoolExecutor(max_workers=MAX_THRD)
         for node in iter_links:
             dictionary_pool.submit(dictionary_attack, tree_structure, node, file)
         handle_user_input(dictionary_pool)
@@ -141,8 +144,8 @@ def automatic_mode(website, file, tree_structure: tr.Tree):
 # to reimplement iteratively TO-FIX
 def gen_list(paths_list, length, string):
     # if length == 0:
-    # for char in char_dictionary:
-    # append to paths_list string + char
+        # for char in char_dictionary:
+            # append to paths_list string + char
     # else:
     # for char in char_dictionary:
     # gen_list(paths_list, length-1, string + char)
