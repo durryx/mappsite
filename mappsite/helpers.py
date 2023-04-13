@@ -51,7 +51,7 @@ def link_cat(website_fs: tr.Tree, node: tr.Node, link: str):
         return link_cat(website_fs, prev_node, link)
 
 
-def handle_user_input(self, thread_pool):
+def handle_user_input(thread_pool):
     # while True:
         # print and get relevant info
         # check if thread has joined with thread_pool.shutdown(wait=True)
