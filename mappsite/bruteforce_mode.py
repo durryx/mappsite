@@ -9,7 +9,7 @@ class BruteforceScan:
     PATH_LIMIT = 20
     CHAR_SET = list(string.ascii_lowercase + string.ascii_uppercase + string.digits
                     + c for c in "<>-.#@*^?%$=!+&")
-
+    MAX_THRD = 10
 
     def __init__(self, website: str):
         sys.setrecursionlimit(5000)

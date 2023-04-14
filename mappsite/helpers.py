@@ -5,7 +5,7 @@ import treelib as tr
 
 def test_connection(website: str, dir_string: str):
     # check if dir_string is a valid link for website
-    # website form = "htttp://www.urltest.domain"
+    # website form = "http://www.urltest.domain"
     # dir_string form = "directory_name"
 
     website = r"{}".format(website)

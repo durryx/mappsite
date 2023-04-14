@@ -1,5 +1,5 @@
 import argparse
-import helpers
+import mappsite.helpers
 
 if __name__ == '__main__':
     print("ciao")

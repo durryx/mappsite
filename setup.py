@@ -11,7 +11,7 @@ setup(
     author='Giovanni Durante',
     author_email='giovanni3durante@gmail.com',
     url='',
-    packages=find_packages(exclude=('tests', 'docs')),
+    packages=find_packages(exclude=('test', 'docs')),
     install_requires=[
 
     ]
