@@ -1,7 +1,8 @@
 import concurrent.futures as th
 import sys
 import logging as log
-from helpers import *
+from mappsite.helpers import *
+
 
 class DictionaryScan:
     website_fs = None
@@ -10,7 +11,7 @@ class DictionaryScan:
 
     def __init__(self, website: str):
         sys.setrecursionlimit(5000)
-        log.basicConfig(filename='app.log', filemode='w', level=log.DEBUG,
+        log.basicConfig(filename='dictionary_scan.log', filemode='w', level=log.DEBUG,
                         format='%(asctime)s - %(name)s - %(levelname)s - dictionary scan -- %(message)s')
         # logger = log.getLogger(__name__)
         # logger.debug('This is a debug message')
@@ -36,7 +37,7 @@ class DictionaryScan:
     def dictionary_attack(self, parent: tr.Node, file: str):
         index, success = 0, 0
         batch: list = self.load_batch(file, index)
-        partial_link = link_cat(self.website_fs, parent, "")
+        partial_link = link_cat(self.website_fs, parent)
 
         while True:
             for index, word in enumerate(batch):
@@ -44,21 +45,21 @@ class DictionaryScan:
                 # word[:-1] is necessary because it has a "\n" on the end
                 outcome, red_tree = test_connection(partial_link, word[:-1])
 
-            # handle use input in order to break
+                # handle use input in order to break
 
                 if red_tree is not None:
-                    # tree_append
+                    tree_append()
                 elif outcome:
                     print(f"\nNew dir found: {parent.data}/{word}")
                     success += 1
-                    # tree_append()
+                    tree_append()
 
             index += self.STRIDE
             batch = self.load_batch(file, index)
 
         return True
 
-    def automatic_mode(self, file):
+    def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]
         depth = 0
         # lambda definition check_depth = lambda x,y: tree_structure.depth(x) == y
