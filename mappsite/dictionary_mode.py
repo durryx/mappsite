@@ -7,7 +7,6 @@ class DictionaryScan:
     website_fs = None
     STRIDE = 2000
     MAX_THRD = 10
-    PATH_LIMIT = 20
 
     def __init__(self, website: str):
         sys.setrecursionlimit(5000)
