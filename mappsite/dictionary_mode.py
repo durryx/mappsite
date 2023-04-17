@@ -62,14 +62,15 @@ class DictionaryScan:
     def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]
         depth = 0
-        # lambda definition check_depth = lambda x,y: tree_structure.depth(x) == y
+        # get_last_nodes = lambda x, y: self.website_fs.depth(x) == y
 
         while True:
             # find a way to check which node exploration has started, max_workers has to be benchmarked
             dictionary_pool = th.ThreadPoolExecutor(max_workers=self.MAX_THRD)
+            futures = []
             for node in iter_links:
-                # TO-FIX passing class to thread
-                dictionary_pool.submit(self.dictionary_attack, node, file)
-            handle_user_input(dictionary_pool)
+                futures.append(dictionary_pool.submit(self.dictionary_attack, node, file))
+            handle_user_input(futures)
             iter_links = iter(self.website_fs.filter_nodes(lambda x: self.website_fs.depth(x) == depth))
+            # iter_links = iter(self.website_fs.filter_nodes(get_last_nodes))
             depth += 1

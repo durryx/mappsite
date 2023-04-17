@@ -60,8 +60,9 @@ class BruteforceScan:
 
         while True:
             bruteforce_pool = th.ThreadPoolExecutor(max_workers=self.MAX_THRD)
+            futures = []
             for url in url_list:
-                bruteforce_pool.submit(self.bruteforce_attack, url, paths_list, 0)
-            handle_user_input(bruteforce_pool)
+                futures.append(bruteforce_pool.submit(self.bruteforce_attack, url, paths_list, 0))
+            handle_user_input(futures)
             url_list = list(self.website_fs.filter_nodes(lambda x: self.website_fs.depth(x) == depth))
             depth += 1

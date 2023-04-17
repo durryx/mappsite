@@ -1,6 +1,7 @@
 import requests as rq
 import copy
 import treelib as tr
+import concurrent.futures as th
 
 
 def test_connection(website: str, dir_string: str):
@@ -55,11 +56,15 @@ def link_cat(website_fs: tr.Tree, node: tr.Node):
     return recursive_cat(website_fs, node, '') + node.tag
 
 
-def handle_user_input(thread_pool):
-    # while True:
-    # print and get relevant info
-    # check if thread has joined with thread_pool.shutdown(wait=True)
-    pass
+def handle_user_input(thread_pool: [th.Future]):
+    on_flag = True
+    one_thread_check = lambda proc: True if (proc.done() == True) else False
+
+    while on_flag:
+        # user input and output - use ncurses?
+        if all(map(one_thread_check, thread_pool)):
+            on_flag = False
+
 
 
 def tree_append(website_fs: tr.Tree, sub_dir, dir_string):
