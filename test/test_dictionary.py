@@ -10,7 +10,7 @@ class TestDictionary(unittest.TestCase):
         self.DictionaryScan = mappsite.dictionary_mode.DictionaryScan("https://www.polimi.it")
 
     def tearDown(self):
-        # os.remove('dictionary_scan.log')
+        os.remove('dictionary_scan.log')
         pass
 
     def test_load_batch(self):

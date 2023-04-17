@@ -1,6 +1,16 @@
 import unittest
 import mappsite.helpers
 import treelib as tr
+import concurrent.futures as th
+import time
+
+
+def test_foo():
+    k = 0
+    for i in range(20):
+        k += 1
+    time.sleep(1)
+    return 0
 
 
 class TestHelpers(unittest.TestCase):
@@ -29,6 +39,11 @@ class TestHelpers(unittest.TestCase):
         node = tree.get_node("polimi-2040")
         full_link = mappsite.helpers.link_cat(tree, node)
         self.assertEqual(full_link, "https://www.polimi.it/il-politecnico/chi-siamo/polimi-2040")
+
+    def test_handle_user_input(self):
+        pool = th.ThreadPoolExecutor(max_workers=10)
+        processes = [pool.submit(test_foo, 100) for _ in range(10)]
+        mappsite.helpers.handle_user_input(processes)
 
 
 if __name__ == '__main__':
