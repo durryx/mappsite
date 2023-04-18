@@ -2,6 +2,7 @@ import requests as rq
 import copy
 import treelib as tr
 import concurrent.futures as th
+import logging as log
 
 
 def test_connection(website: str, dir_string: str):
@@ -66,8 +67,18 @@ def handle_user_input(thread_pool: [th.Future]):
             on_flag = False
 
 
-
-def tree_append(website_fs: tr.Tree, sub_dir, dir_string):
-    # append dir_string as a valid resource to sub_dir in website_fs
-    # or append small tree to node
-    return
+def tree_append(website_fs: tr.Tree, parent: tr.Node, **kwargs):
+    logger = log.getLogger(__name__)
+    try:
+        if 'red_tree' in kwargs:
+            website_fs.paste(parent.identifier, kwargs['red_tree"'])
+        elif 'directory' in kwargs:
+            website_fs.create_node(kwargs['directory'], kwargs['directory'], parent=parent.identifier)
+        else:
+            raise KeyError("tree_append cannot take other **kwargs argument other than 'red_tree' or 'directory'")
+    except KeyError as e:
+        logger.exception('passed invalid key to tree_append, shutting down')
+        print(e)
+        raise SystemExit
+    finally:
+        logger.info('new directory found')

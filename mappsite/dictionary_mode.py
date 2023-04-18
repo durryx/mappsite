@@ -27,9 +27,10 @@ class DictionaryScan:
                     next(file)
                 batch = [next(file) for _ in range(self.STRIDE)]
             return batch
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             logger = log.getLogger(__name__)
             logger.exception("dictionary file not found")
+            print(e)
             raise SystemExit
         finally:
             f.close()
@@ -45,14 +46,12 @@ class DictionaryScan:
                 # word[:-1] is necessary because it has a "\n" on the end
                 outcome, red_tree = test_connection(partial_link, word[:-1])
 
-                # handle use input in order to break
-
                 if red_tree is not None:
-                    tree_append()
-                elif outcome:
-                    print(f"\nNew dir found: {parent.data}/{word}")
+                    tree_append(self.website_fs, parent, red_tree)
                     success += 1
-                    tree_append()
+                elif outcome:
+                    success += 1
+                    tree_append(self.website_fs, parent, word)
 
             index += self.STRIDE
             batch = self.load_batch(file, index)
@@ -62,7 +61,6 @@ class DictionaryScan:
     def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]
         depth = 0
-        # get_last_nodes = lambda x, y: self.website_fs.depth(x) == y
 
         while True:
             # find a way to check which node exploration has started, max_workers has to be benchmarked

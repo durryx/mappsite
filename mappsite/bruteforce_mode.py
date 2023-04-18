@@ -41,15 +41,17 @@ class BruteforceScan:
 
         for i in range(chars_num ** depth):
             index = i * inc - 1
+            # TO-FIX / TEST what is path -- MUST PASS partial link to tree append and then parent node
             path = paths_list[index][:depth]
             outcome, red_tree = test_connection(parent, path)
 
             if red_tree is not None:
-                tree_append()
+                tree_append(self.website_fs, parent, red_tree)
+                success+=1
             elif outcome:
-                print(f"\nNew dir found: {parent.data}/word")
+                print(f"\nNew dir found: {parent.data}/{path}")
                 success += 1
-                tree_append()
+                tree_append(self.website_fs, parent, path)
 
         self.bruteforce_attack(parent, paths_list, depth + 1)
 
