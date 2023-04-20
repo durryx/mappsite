@@ -1,5 +1,6 @@
 import unittest
 import mappsite.dictionary_mode
+import mappsite.base_class
 import treelib as tr
 import os
 import threading as thr
@@ -9,15 +10,18 @@ import time
 class TestDictionary(unittest.TestCase):
 
     def setUp(self):
-        self.DictionaryScan = mappsite.dictionary_mode.DictionaryScan("https://www.polimi.it")
+        self.DictionaryScan = mappsite.dictionary_mode
 
     def tearDown(self):
         os.remove('dictionary_scan.log')
         pass
 
     def test_load_batch(self):
-        batch = self.DictionaryScan.load_batch("../dictionaries/wordlist_test.txt", 0)
-        print(batch)
+        word = self.DictionaryScan.load_batch("../dictionaries/wordlist_test.txt")
+        mappsite.dictionary_mode.load_batch("")
+        print(next(word))
+        print(next(word))
+        print(next(word))
 
     def test_dictionary_attack(self):
         stop_flag = thr.Event()

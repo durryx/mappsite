@@ -1,29 +1,31 @@
 from base_class import *
+from helpers import *
+
+def load_batch(file) -> str:
+    # handle case where end of file is reached
+    try:
+        with open(file, "r") as f:
+            for line in f:
+                yield line
+    except FileNotFoundError as e:
+        logger = log.getLogger(__name__)
+        logger.exception("dictionary file not found")
+        print(e)
+        raise SystemExit
 
 
 class DictionaryScan(WrapperScan):
     STRIDE = 2000
 
+    def next_word(self, file):
+        with open(file, 'r') as f:
+            yield next(f)
+
     # convert to python generator
-    def load_batch(self, file, index) -> [str]:
-        try:
-            with open(file, "r") as f:
-                # reads lines between index and index + stride
-                for _ in range(index):
-                    next(file)
-                batch = [next(file) for _ in range(self.STRIDE)]
-            return batch
-        except FileNotFoundError as e:
-            logger = log.getLogger(__name__)
-            logger.exception("dictionary file not found")
-            print(e)
-            raise SystemExit
-        finally:
-            f.close()
 
     def dictionary_attack(self, parent: tr.Node, file: str, stop_flag: thr.Event):
         index, success = 0, 0
-        batch: list = self.load_batch(file, index)
+        batch: list = load_batch(file, index)
         partial_link = link_cat(self.website_fs, parent)
 
         while True:
@@ -43,7 +45,7 @@ class DictionaryScan(WrapperScan):
                 return
 
             index += self.STRIDE
-            batch = self.load_batch(file, index)
+            batch = load_batch(file, index)
 
     def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]

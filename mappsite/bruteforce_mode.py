@@ -1,5 +1,6 @@
 from base_class import *
-
+from helpers import *
+import string
 
 class BruteforceScan(WrapperScan):
     PATH_LIMIT = 20

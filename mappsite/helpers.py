@@ -66,7 +66,7 @@ def link_cat(website_fs: tr.Tree, node: tr.Node) -> str:
     return recursive_cat(website_fs, node, '') + node.tag
 
 
-def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event) -> InputCodes.value:
+def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event):
     one_thread_check = lambda proc: True if (proc.done()) else False
 
     while True:
