@@ -3,9 +3,18 @@ import copy
 import treelib as tr
 import concurrent.futures as th
 import logging as log
+import threading as thr
+import enum
 
 
-def test_connection(website: str, dir_string: str):
+class InputCodes(enum.Enum):
+    STOP = enum.auto()
+    PAUSE = enum.auto()
+    SHUTDOWN = enum.auto()
+    CONTINUE = enum.auto()
+
+
+def test_connection(website: str, dir_string: str) -> [bool, tr.Tree]:
     # check if dir_string is a valid link for website
     # website form = "http://www.urltest.domain"
     # dir_string form = "directory_name"
@@ -43,7 +52,7 @@ def test_connection(website: str, dir_string: str):
     return True, temp_tree
 
 
-def recursive_cat(website_fs: tr.Tree, node: tr.Node, link: str):
+def recursive_cat(website_fs: tr.Tree, node: tr.Node, link: str) -> str:
     if node.is_root():
         return link
     else:
@@ -53,18 +62,20 @@ def recursive_cat(website_fs: tr.Tree, node: tr.Node, link: str):
         return recursive_cat(website_fs, prev_node, link)
 
 
-def link_cat(website_fs: tr.Tree, node: tr.Node):
+def link_cat(website_fs: tr.Tree, node: tr.Node) -> str:
     return recursive_cat(website_fs, node, '') + node.tag
 
 
-def handle_user_input(thread_pool: [th.Future]):
-    on_flag = True
-    one_thread_check = lambda proc: True if (proc.done() == True) else False
+def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event) -> InputCodes.value:
+    one_thread_check = lambda proc: True if (proc.done()) else False
 
-    while on_flag:
+    while True:
         # user input and output - use ncurses?
+        # stopping thread
+        stop_flag.set()
+
         if all(map(one_thread_check, thread_pool)):
-            on_flag = False
+            return InputCodes.CONTINUE
 
 
 def tree_append(website_fs: tr.Tree, parent: tr.Node, **kwargs):

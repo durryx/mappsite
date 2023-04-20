@@ -35,7 +35,6 @@ class TestHelpers(unittest.TestCase):
         tree.create_node("politica-per-la-qualita-di-ateneo", "politica-per-la-qualita-di-ateneo", parent="chi-siamo")
         tree.create_node("polimi-2040", "polimi-2040", parent="chi-siamo")
         tree.show()
-
         node = tree.get_node("polimi-2040")
         full_link = mappsite.helpers.link_cat(tree, node)
         self.assertEqual(full_link, "https://www.polimi.it/il-politecnico/chi-siamo/polimi-2040")

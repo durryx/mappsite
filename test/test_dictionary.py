@@ -2,6 +2,8 @@ import unittest
 import mappsite.dictionary_mode
 import treelib as tr
 import os
+import threading as thr
+import time
 
 
 class TestDictionary(unittest.TestCase):
@@ -18,10 +20,16 @@ class TestDictionary(unittest.TestCase):
         print(batch)
 
     def test_dictionary_attack(self):
-        pass
+        stop_flag = thr.Event()
+        tree = tr.Tree()
+        node = tree.create_node("https://www.polimi.it", "https://www.polimi.it")
+        self.DictionaryScan.dictionary_attack(node, "../dictionaries/wordlist_test.txt", stop_flag)
+        time.sleep(5)
+        stop_flag.set()
+        tree.show()
 
     def test_dictionary_mode(self):
-        pass
+        self.DictionaryScan.dictionary_mode("../dictionaries/wordlist_test.txt")
 
 
 if __name__ == '__main__':

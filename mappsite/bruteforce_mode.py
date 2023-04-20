@@ -3,6 +3,7 @@ import sys
 import logging as log
 import string
 import concurrent.futures as th
+import threading as thr
 
 
 class BruteforceScan:
@@ -23,15 +24,15 @@ class BruteforceScan:
         self.website_fs.create_node(website, website)
 
     # to reimplement iteratively TO-FIX
-    def gen_list(self, paths_list: list, length, string):
+    def gen_list(self, paths_list: list, length, partial_string: str):
         if length == 0:
             for char in self.CHAR_SET:
-                paths_list.append(string + char)
+                paths_list.append(partial_string + char)
         else:
             for char in self.CHAR_SET:
-                self.gen_list(paths_list, length - 1, string + char)
+                self.gen_list(paths_list, length - 1, partial_string + char)
 
-    def bruteforce_attack(self, parent, paths_list, depth):
+    def bruteforce_attack(self, parent, paths_list: [str], depth):
         if depth == self.PATH_LIMIT:
             return
 
@@ -47,7 +48,7 @@ class BruteforceScan:
 
             if red_tree is not None:
                 tree_append(self.website_fs, parent, red_tree)
-                success+=1
+                success += 1
             elif outcome:
                 print(f"\nNew dir found: {parent.data}/{path}")
                 success += 1
@@ -55,16 +56,17 @@ class BruteforceScan:
 
         self.bruteforce_attack(parent, paths_list, depth + 1)
 
-    def bruteforce_mode(self, website):
+    def bruteforce_mode(self):
         paths_list, depth = [], 0
-        url_list = [website]
+        url_list = [self.website_fs.identifier]
         self.gen_list(paths_list, self.PATH_LIMIT, '')
 
         while True:
             bruteforce_pool = th.ThreadPoolExecutor(max_workers=self.MAX_THRD)
             futures = []
+            stop_flag = thr.Event()
             for url in url_list:
                 futures.append(bruteforce_pool.submit(self.bruteforce_attack, url, paths_list, 0))
-            handle_user_input(futures)
+            action = handle_user_input(futures, stop_flag)
             url_list = list(self.website_fs.filter_nodes(lambda x: self.website_fs.depth(x) == depth))
             depth += 1

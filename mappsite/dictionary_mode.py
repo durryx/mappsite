@@ -2,6 +2,7 @@ import concurrent.futures as th
 import sys
 import logging as log
 from mappsite.helpers import *
+import threading as thr
 
 
 class DictionaryScan:
@@ -19,7 +20,11 @@ class DictionaryScan:
         self.website_fs = tr.Tree()
         self.website_fs.create_node(website, website)
 
-    def load_batch(self, file, index):
+    def __del__(self, action: bool):
+        # save or not results to file or anything else
+        pass
+
+    def load_batch(self, file, index) -> [str]:
         try:
             with open(file, "r") as f:
                 # reads lines between index and index + stride
@@ -35,7 +40,7 @@ class DictionaryScan:
         finally:
             f.close()
 
-    def dictionary_attack(self, parent: tr.Node, file: str):
+    def dictionary_attack(self, parent: tr.Node, file: str, stop_flag: thr.Event):
         index, success = 0, 0
         batch: list = self.load_batch(file, index)
         partial_link = link_cat(self.website_fs, parent)
@@ -53,10 +58,11 @@ class DictionaryScan:
                     success += 1
                     tree_append(self.website_fs, parent, word)
 
+            if stop_flag.is_set():
+                return
+
             index += self.STRIDE
             batch = self.load_batch(file, index)
-
-        return True
 
     def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]
@@ -64,11 +70,27 @@ class DictionaryScan:
 
         while True:
             # find a way to check which node exploration has started, max_workers has to be benchmarked
+            # exception FutureWarning
             dictionary_pool = th.ThreadPoolExecutor(max_workers=self.MAX_THRD)
             futures = []
+            stop_flag = thr.Event()
             for node in iter_links:
-                futures.append(dictionary_pool.submit(self.dictionary_attack, node, file))
-            handle_user_input(futures)
+                futures.append(dictionary_pool.submit(self.dictionary_attack, node, file, stop_flag))
+            action = handle_user_input(futures, stop_flag)
+
+            # create parent class with function to handle actions and other constructors/destructors
+            match action:
+                case InputCodes.CONTINUE:
+                    # print going another level deep
+                    pass
+                case InputCodes.SHUTDOWN:
+                    # prepare shutdown
+                    self.__del__(True)
+
+                case InputCodes.STOP:
+                    # STOP means to start going another level deep
+                    # make the user select what directory to further investigate
+                    pass
+
             iter_links = iter(self.website_fs.filter_nodes(lambda x: self.website_fs.depth(x) == depth))
-            # iter_links = iter(self.website_fs.filter_nodes(get_last_nodes))
             depth += 1
