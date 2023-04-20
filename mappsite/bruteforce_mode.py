@@ -1,33 +1,17 @@
-from helpers import *
-import sys
-import logging as log
-import string
-import concurrent.futures as th
-import threading as thr
+from base_class import *
 
 
-class BruteforceScan:
-    website_fs = None
+class BruteforceScan(WrapperScan):
     PATH_LIMIT = 20
     CHAR_SET = list(string.ascii_lowercase + string.ascii_uppercase + string.digits) \
                + [c for c in "<>-.#@*^?%$=!+&"]
-    MAX_THRD = 10
-
-    def __init__(self, website: str):
-        sys.setrecursionlimit(5000)
-        log.basicConfig(filename='app.log', filemode='w', level=log.DEBUG,
-                        format='%(asctime)s - %(name)s - %(levelname)s - dictionary scan -- %(message)s')
-        # logger = log.getLogger(__name__)
-        # logger.debug('This is a debug message')
-
-        self.website_fs = tr.Tree()
-        self.website_fs.create_node(website, website)
 
     # to reimplement iteratively TO-FIX
     def gen_list(self, paths_list: list, length, partial_string: str):
         if length == 0:
             for char in self.CHAR_SET:
                 paths_list.append(partial_string + char)
+            return
         else:
             for char in self.CHAR_SET:
                 self.gen_list(paths_list, length - 1, partial_string + char)
@@ -57,7 +41,8 @@ class BruteforceScan:
         self.bruteforce_attack(parent, paths_list, depth + 1)
 
     def bruteforce_mode(self):
-        paths_list, depth = [], 0
+        paths_list = []
+        depth = 0
         url_list = [self.website_fs.identifier]
         self.gen_list(paths_list, self.PATH_LIMIT, '')
 

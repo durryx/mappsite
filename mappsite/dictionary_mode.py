@@ -1,29 +1,10 @@
-import concurrent.futures as th
-import sys
-import logging as log
-from mappsite.helpers import *
-import threading as thr
+from base_class import *
 
 
-class DictionaryScan:
-    website_fs = None
+class DictionaryScan(WrapperScan):
     STRIDE = 2000
-    MAX_THRD = 10
 
-    def __init__(self, website: str):
-        sys.setrecursionlimit(5000)
-        log.basicConfig(filename='dictionary_scan.log', filemode='w', level=log.DEBUG,
-                        format='%(asctime)s - %(name)s - %(levelname)s - dictionary scan -- %(message)s')
-        # logger = log.getLogger(__name__)
-        # logger.debug('This is a debug message')
-
-        self.website_fs = tr.Tree()
-        self.website_fs.create_node(website, website)
-
-    def __del__(self, action: bool):
-        # save or not results to file or anything else
-        pass
-
+    # convert to python generator
     def load_batch(self, file, index) -> [str]:
         try:
             with open(file, "r") as f:
@@ -84,8 +65,7 @@ class DictionaryScan:
                     # print going another level deep
                     pass
                 case InputCodes.SHUTDOWN:
-                    # prepare shutdown
-                    self.__del__(True)
+                    return
 
                 case InputCodes.STOP:
                     # STOP means to start going another level deep

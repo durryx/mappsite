@@ -35,7 +35,7 @@ def test_connection(website: str, dir_string: str) -> [bool, tr.Tree]:
 
     # check redirections' status if they exist and save them -- error for invalid redirections
     # see https://requests.readthedocs.io/en/latest/user/quickstart/#redirection-and-history
-    if len(response.history) == 1:
+    if len(response.history) >= 1:
         return True, None
 
     # explore redirections
@@ -79,17 +79,17 @@ def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event) -> InputCo
 
 
 def tree_append(website_fs: tr.Tree, parent: tr.Node, **kwargs):
-    logger = log.getLogger(__name__)
-    try:
-        if 'red_tree' in kwargs:
-            website_fs.paste(parent.identifier, kwargs['red_tree"'])
-        elif 'directory' in kwargs:
-            website_fs.create_node(kwargs['directory'], kwargs['directory'], parent=parent.identifier)
-        else:
-            raise KeyError("tree_append cannot take other **kwargs argument other than 'red_tree' or 'directory'")
-    except KeyError as e:
-        logger.exception('passed invalid key to tree_append, shutting down')
-        print(e)
-        raise SystemExit
-    finally:
-        logger.info('new directory found')
+    with log.getLogger(__name__) as logger:
+        try:
+            if 'red_tree' in kwargs:
+                website_fs.paste(parent.identifier, kwargs['red_tree"'])
+            elif 'directory' in kwargs:
+                website_fs.create_node(kwargs['directory'], kwargs['directory'], parent=parent.identifier)
+            else:
+                raise KeyError("tree_append cannot take other **kwargs argument other than 'red_tree' or 'directory'")
+        except KeyError as e:
+            logger.exception('passed invalid key to tree_append, shutting down')
+            print(e)
+            raise SystemExit
+        finally:
+            logger.info('new directory found')

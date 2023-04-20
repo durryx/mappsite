@@ -44,6 +44,9 @@ class TestHelpers(unittest.TestCase):
         processes = [pool.submit(test_foo, 100) for _ in range(10)]
         mappsite.helpers.handle_user_input(processes)
 
+    def test_tree_append(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()
