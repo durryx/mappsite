@@ -5,6 +5,7 @@ import concurrent.futures as th
 import logging as log
 import threading as thr
 import enum
+import itertools
 
 
 class InputCodes(enum.Enum):
@@ -12,10 +13,6 @@ class InputCodes(enum.Enum):
     PAUSE = enum.auto()
     SHUTDOWN = enum.auto()
     CONTINUE = enum.auto()
-
-def set_global(args):
-    global sval
-    sval = args
 
 
 def test_connection(website: str, dir_string: str):
@@ -91,7 +88,7 @@ def tree_append(website_fs: tr.Tree, parent: tr.Node, *args):
             website_fs.create_node(args[0], args[0], parent=parent.identifier)
         else:
             raise TypeError("tree_append cannot take other *args argument other than 'string' or 'tr.Node'")
-    except KeyError as e:
+    except TypeError as e:
         logger.exception('passed invalid variables to tree_append, shutting down')
         print(e)
         raise SystemExit

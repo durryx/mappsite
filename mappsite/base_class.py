@@ -1,12 +1,29 @@
 import sys
 import logging as log
 import treelib as tr
+import itertools
+
+
+class Counter:
+    def __init__(self):
+        self._incs = itertools.count()
+        self._decs = itertools.count()
+
+    def inc(self):
+        next(self._incs)
+
+    def dec(self):
+        next(self._decs)
+
+    def count(self):
+        return next(self._incs) - next(self._decs)
 
 
 class WrapperScan:
     website_fs = None
     MAX_THRD = 10
     MAX_TIME = 2
+    total_requests = Counter()
 
     def __init__(self, website: str):
         sys.setrecursionlimit(5000)
@@ -18,7 +35,11 @@ class WrapperScan:
         self.website_fs = tr.Tree()
         self.website_fs.create_node(website, website)
 
-        # check if files exists here and thow exception
+        # check if files exists here and throw
+        #         exception logger = log.getLogger(__name__)
+        #         logger.exception("dictionary file not found")
+        #         print(e)
+        #         raise SystemExit
 
     def extract_from_link(self):
         pass

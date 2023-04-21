@@ -1,6 +1,5 @@
 import os
 import sys
-
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 from base_class import *
@@ -9,23 +8,14 @@ from typing import Generator
 
 
 def next_word(file) -> Generator:
-    # handle case where end of file is reached
-    try:
-        with open(file, "r") as f:
-            for line in f:
-                yield line.strip('\n')
-    except FileNotFoundError as e:
-        logger = log.getLogger(__name__)
-        logger.exception("dictionary file not found")
-        print(e)
-        raise SystemExit
+    with open(file, "r") as f:
+        for line in f:
+            yield line.strip('\n')
 
 
 class DictionaryScan(WrapperScan):
-    STRIDE = 2000
-
     def dictionary_attack(self, parent: tr.Node, file: str, stop_flag: thr.Event):
-        index, success = 0, 0
+        success = 0
         timer = thr.Timer(self.MAX_TIME, lambda *args: None)
         with open(file) as f:
             num_lines = sum(1 for line in f)
@@ -34,7 +24,10 @@ class DictionaryScan(WrapperScan):
 
         timer.start()
         while True:
-            current_word = copy.deepcopy(next(word))
+            try:
+                current_word = copy.deepcopy(next(word))
+            except StopIteration:
+                return
             outcome, red_tree = test_connection(partial_link, current_word)
             if red_tree is not None:
                 tree_append(self.website_fs, parent, red_tree)
@@ -53,7 +46,7 @@ class DictionaryScan(WrapperScan):
                     return
                 timer = thr.Timer(self.MAX_TIME, lambda *args: None)
                 timer.start()
-            index += 1
+            self.total_requests.inc()
 
     def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]
