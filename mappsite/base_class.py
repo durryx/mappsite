@@ -2,9 +2,11 @@ import sys
 import logging as log
 import treelib as tr
 
+
 class WrapperScan:
     website_fs = None
     MAX_THRD = 10
+    MAX_TIME = 2
 
     def __init__(self, website: str):
         sys.setrecursionlimit(5000)
@@ -15,6 +17,8 @@ class WrapperScan:
 
         self.website_fs = tr.Tree()
         self.website_fs.create_node(website, website)
+
+        # check if files exists here and thow exception
 
     def extract_from_link(self):
         pass

@@ -1,12 +1,19 @@
+import os
+import sys
+
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
 from base_class import *
 from helpers import *
+from typing import Generator
 
-def load_batch(file) -> str:
+
+def next_word(file) -> Generator:
     # handle case where end of file is reached
     try:
         with open(file, "r") as f:
             for line in f:
-                yield line
+                yield line.strip('\n')
     except FileNotFoundError as e:
         logger = log.getLogger(__name__)
         logger.exception("dictionary file not found")
@@ -17,35 +24,36 @@ def load_batch(file) -> str:
 class DictionaryScan(WrapperScan):
     STRIDE = 2000
 
-    def next_word(self, file):
-        with open(file, 'r') as f:
-            yield next(f)
-
-    # convert to python generator
-
     def dictionary_attack(self, parent: tr.Node, file: str, stop_flag: thr.Event):
         index, success = 0, 0
-        batch: list = load_batch(file, index)
+        timer = thr.Timer(self.MAX_TIME, lambda *args: None)
+        with open(file) as f:
+            num_lines = sum(1 for line in f)
+        word = next_word(file)
         partial_link = link_cat(self.website_fs, parent)
 
+        timer.start()
         while True:
-            for index, word in enumerate(batch):
-                # parent.data takes the used payload associated by the user to the node id
-                # word[:-1] is necessary because it has a "\n" on the end
-                outcome, red_tree = test_connection(partial_link, word[:-1])
+            current_word = copy.deepcopy(next(word))
+            outcome, red_tree = test_connection(partial_link, current_word)
+            if red_tree is not None:
+                tree_append(self.website_fs, parent, red_tree)
+                success += 1
+            elif outcome:
+                success += 1
+                tree_append(self.website_fs, parent, current_word)
 
-                if red_tree is not None:
-                    tree_append(self.website_fs, parent, red_tree)
-                    success += 1
-                elif outcome:
-                    success += 1
-                    tree_append(self.website_fs, parent, word)
-
-            if stop_flag.is_set():
-                return
-
-            index += self.STRIDE
-            batch = load_batch(file, index)
+            if not timer.is_alive():
+                """
+                with stop_flag_lock:
+                    if stop_flag.value:
+                        return
+                """
+                if stop_flag.is_set():
+                    return
+                timer = thr.Timer(self.MAX_TIME, lambda *args: None)
+                timer.start()
+            index += 1
 
     def dictionary_mode(self, file):
         iter_links = [self.website_fs.root]

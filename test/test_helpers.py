@@ -2,6 +2,7 @@ import unittest
 import mappsite.helpers
 import treelib as tr
 import concurrent.futures as th
+import threading as thr
 import time
 
 
@@ -42,10 +43,18 @@ class TestHelpers(unittest.TestCase):
     def test_handle_user_input(self):
         pool = th.ThreadPoolExecutor(max_workers=10)
         processes = [pool.submit(test_foo, 100) for _ in range(10)]
-        mappsite.helpers.handle_user_input(processes)
+        ev = thr.Event()
+        mappsite.helpers.handle_user_input(processes, ev)
 
     def test_tree_append(self):
-        pass
+        tree = tr.Tree()
+        parent = tree.create_node("https://www.polimi.it", "https://www.polimi.it")
+        temp_tree = tr.Tree()
+        temp_tree.create_node("random_link_2", "random_link_2")
+        mappsite.helpers.tree_append(tree, parent, "altro_link_a_caso")
+        mappsite.helpers.tree_append(tree, parent, temp_tree)
+        tree.show()
+
 
 
 if __name__ == '__main__':

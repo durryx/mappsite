@@ -13,8 +13,12 @@ class InputCodes(enum.Enum):
     SHUTDOWN = enum.auto()
     CONTINUE = enum.auto()
 
+def set_global(args):
+    global sval
+    sval = args
 
-def test_connection(website: str, dir_string: str) -> [bool, tr.Tree]:
+
+def test_connection(website: str, dir_string: str):
     # check if dir_string is a valid link for website
     # website form = "http://www.urltest.domain"
     # dir_string form = "directory_name"
@@ -35,7 +39,7 @@ def test_connection(website: str, dir_string: str) -> [bool, tr.Tree]:
 
     # check redirections' status if they exist and save them -- error for invalid redirections
     # see https://requests.readthedocs.io/en/latest/user/quickstart/#redirection-and-history
-    if len(response.history) >= 1:
+    if len(response.history) == 1:
         return True, None
 
     # explore redirections
@@ -78,18 +82,18 @@ def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event):
             return InputCodes.CONTINUE
 
 
-def tree_append(website_fs: tr.Tree, parent: tr.Node, **kwargs):
-    with log.getLogger(__name__) as logger:
-        try:
-            if 'red_tree' in kwargs:
-                website_fs.paste(parent.identifier, kwargs['red_tree"'])
-            elif 'directory' in kwargs:
-                website_fs.create_node(kwargs['directory'], kwargs['directory'], parent=parent.identifier)
-            else:
-                raise KeyError("tree_append cannot take other **kwargs argument other than 'red_tree' or 'directory'")
-        except KeyError as e:
-            logger.exception('passed invalid key to tree_append, shutting down')
-            print(e)
-            raise SystemExit
-        finally:
-            logger.info('new directory found')
+def tree_append(website_fs: tr.Tree, parent: tr.Node, *args):
+    logger = log.getLogger(__name__)
+    try:
+        if type(args[0]) is tr.Tree:
+            website_fs.paste(parent.identifier, args[0])
+        elif type(args[0]) is str:
+            website_fs.create_node(args[0], args[0], parent=parent.identifier)
+        else:
+            raise TypeError("tree_append cannot take other *args argument other than 'string' or 'tr.Node'")
+    except KeyError as e:
+        logger.exception('passed invalid variables to tree_append, shutting down')
+        print(e)
+        raise SystemExit
+    finally:
+        logger.info('new directory found')
