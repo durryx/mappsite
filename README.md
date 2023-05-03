@@ -103,6 +103,7 @@ flowchart TD
 - [ ] check timeout website IP block
 - [ ] automatically update dictionary using github, putting on the top of the file the most common links
 - [ ] create python package with github actions
+- [ ] better comments
 
 
 
