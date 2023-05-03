@@ -27,6 +27,8 @@ class DictionaryScan(WrapperScan):
             try:
                 current_word = copy.deepcopy(next(word))
             except StopIteration:
+                # load next file with .send or return if not possible
+                word.close()
                 return
             outcome, red_tree = test_connection(partial_link, current_word)
             if red_tree is not None:
