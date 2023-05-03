@@ -13,6 +13,7 @@ Do whatever you want but always test your functions when commiting. :-)
 
 * UI:
 https://towardsdatascience.com/rich-generate-rich-and-beautiful-text-in-the-terminal-with-python-541f39abf32e
+https://opensource.com/article/17/5/4-practical-python-libraries
 https://betterprogramming.pub/designing-beautiful-command-line-applications-with-python-72bd2f972ea
 https://www.freecodecamp.org/news/use-the-rich-library-in-python/
 https://python-prompt-toolkit.readthedocs.io/en/stable/pages/tutorials/repl.html
