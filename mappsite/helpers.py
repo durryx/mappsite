@@ -68,6 +68,26 @@ def link_cat(website_fs: tr.Tree, node: tr.Node) -> str:
 
 
 def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event):
+    """
+    |-------------------------------------------|
+    | www.google.com            time: 66 min    |
+    |                                           |
+    |    /                   |   progress bar1  | [rich python library progress bar like live_progress.py]
+    |    ├── bin -> usr/bin  |                  |
+    |    ├── boot            |   progress bar2  |
+    |    ├── dev             |                  |
+    |    ...                 |   progress bar3  |
+    |    ├─ end              |                  |
+    |          ------last links-----            |
+    |   www.google.com/aaaaaa/bbbbbb            |
+    |   www.google.com/ccccccccccccccccccccccc> | [enable paging scrolling for long websites]
+    |    ...                                    |
+    |                                           |
+    | ^G tot_found   ^O view full website   ^W total_requests |  [highlighted commands like in nano]
+    |  ^K performance    ^T STOP    ^X SHUTDOWN   ^R CONTINUE |
+    |---------------------------------------------------------|
+
+    """
     one_thread_check = lambda proc: True if (proc.done()) else False
 
     while True:
@@ -80,6 +100,12 @@ def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event):
 
 
 def tree_append(website_fs: tr.Tree, parent: tr.Node, *args):
+    """
+    :param website_fs:
+    :param parent:
+    :param args:
+    :return:
+    """
     logger = log.getLogger(__name__)
     try:
         if type(args[0]) is tr.Tree:
