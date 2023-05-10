@@ -4,10 +4,11 @@ from textual.app import App, ComposeResult
 from textual.widgets import Static
 from textual.widgets import Tree
 from textual.widgets import Header, Footer
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, Vertical, Grid
 from textual.reactive import reactive
 from time import monotonic
 import os
+from rich.spinner import Spinner
 from textual.app import App, ComposeResult
 from textual import events
 from textual.widgets import TextLog, ProgressBar
@@ -16,6 +17,46 @@ from textual.widgets import Label
 from textual.timer import Timer
 
 website = f"google.com/ciao/"
+
+""" ABANDONED TERMINAL UI EXAMPLE """
+
+"""
+terminal UI scheme
+ |-------------------------------------------|
+ | www.google.com            time: 66 min    |
+ |                                           |
+ |    /                   |   progress bar1  | [rich python library progress bar like live_progress.py]
+ |    ├── bin -> usr/bin  |                  |
+ |    ├── boot            |   progress bar2  |
+ |    ├── dev             |                  |
+ |    ...                 |   progress bar3  |
+ |    ├─ end              |                  |
+ |          ------last links-----            |
+ |   www.google.com/aaaaaa/bbbbbb            |
+ |   www.google.com/ccccccccccccccccccccccc> | [enable paging scrolling for long websites]
+ |    ...                                    |
+ |                                           |
+ | ^G tot_found   ^O view full website   ^W total_requests |  [highlighted commands like in nano]
+ |  ^K performance    ^T STOP    ^X SHUTDOWN   ^R CONTINUE |
+ |---------------------------------------------------------|
+
+ """
+
+
+"""
+Spinner object curently not supported
+
+class SpinnerWidget(Static):
+    def __init__(self):
+        super().__init__("")
+        self._spinner = Spinner("dots")
+
+    def on_mount(self) -> None:
+        self.update_render = self.set_interval(1 / 60, self.update_spinner)
+
+    def update_spinner(self) -> None:
+        self.update(self._spinner)
+"""
 
 
 class AlternativeHeader(Static):
@@ -36,8 +77,8 @@ class AlternativeHeader(Static):
         """Called when the time attribute changes."""
         minutes, seconds = divmod(time, 60)
         hours, minutes = divmod(minutes, 60)
-        padding = os.get_terminal_size().columns - len(website) - 24
-        line = f"target website: {website: <{padding}} TT:{hours:02,.0f} h :{minutes:02.0f} min :{seconds:04.1f} s"
+        padding = os.get_terminal_size().columns - len(website) - 25
+        line = f"target website: {website: <{padding}} TT: {hours:02,.0f} h :{minutes:02.0f} min :{seconds:04.1f} s"
         self.update(line)
 
     def start(self) -> None:
@@ -52,7 +93,7 @@ class AlternativeHeader(Static):
         self.time = self.total
 
 
-class TreeApp(Static):
+class TreeView(Static):
     def compose(self) -> ComposeResult:
         tree: Tree[dict] = Tree("Dune")
         tree.root.expand()
@@ -63,9 +104,8 @@ class TreeApp(Static):
         yield tree
 
 
-class VerticalLayoutExample(App):
+class Mappsite(App):
     CSS_PATH = "vertical_layout.css"
-
 
     progress_timer: Timer
 
@@ -96,9 +136,17 @@ class VerticalLayoutExample(App):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=False)
         yield AlternativeHeader()
-        yield TreeApp()
-        yield TextLog(highlight=True, markup=True)
-        # rich status spinner -- feature will be added to textual
+        yield TreeView()
+        with Vertical(classes="container"):
+            yield TextLog(highlight=True, markup=True)
+        """
+        spinner code for progress currently not supported
+            yield Horizontal(
+                SpinnerWidget(),
+                Label("ciao"),  # TO-FIX -- horizontal not working
+                classes="spinner"
+            )
+        """
         with Horizontal(classes="alternative_footer"):
             yield Label("active mode bla bla  ", classes="box")
             yield ProgressBar()
@@ -108,7 +156,7 @@ class VerticalLayoutExample(App):
         """Set up a timer to simulate progess happening."""
         self.progress_timer = self.set_interval(1 / 10, self.make_progress, pause=True)
 
-        text_log = self.query_one(TextLog)
+        text_log = self.query_one(Vertical)
         text_log.border_title = "last found links"
 
     def make_progress(self) -> None:
@@ -136,5 +184,6 @@ class VerticalLayoutExample(App):
 
 
 if __name__ == "__main__":
-    app = VerticalLayoutExample()
+    app = Mappsite()
     app.run()
+    print("ciosdfkdsj")
