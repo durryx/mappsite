@@ -1,5 +1,6 @@
 import os
 import sys
+
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 from base_class import *
@@ -14,6 +15,19 @@ def next_word(file) -> Generator:
 
 
 class DictionaryScan(WrapperScan):
+    futures = []
+    stop_flag = thr.Event()
+
+    def handle_user_input(self):
+        one_thread_check = lambda proc: True if (proc.done()) else False
+        while True:
+            # user input and output - use ncurses?
+            # stopping thread
+            self.stop_flag.set()
+
+            if all(map(one_thread_check, self.futures)):
+                return [InputCodes.CONTINUE, None]
+
     def dictionary_attack(self, parent: tr.Node, file: str, stop_flag: thr.Event):
         success = 0
         timer = thr.Timer(self.MAX_TIME, lambda *args: None)
@@ -58,23 +72,30 @@ class DictionaryScan(WrapperScan):
             # find a way to check which node exploration has started, max_workers has to be benchmarked
             # exception FutureWarning
             dictionary_pool = th.ThreadPoolExecutor(max_workers=self.MAX_THRD)
-            futures = []
-            stop_flag = thr.Event()
             for node in iter_links:
-                futures.append(dictionary_pool.submit(self.dictionary_attack, node, file, stop_flag))
-            action = handle_user_input(futures, stop_flag)
+                self.futures.append(dictionary_pool.submit(self.dictionary_attack, node, file, stop_flag))
+
+            # after submitting work to threads enter the UI and give control to user
+            code, action = self.handle_user_input()
 
             # create parent class with function to handle actions and other constructors/destructors
-            match action:
+            match code:
                 case InputCodes.CONTINUE:
                     # print going another level deep
                     pass
                 case InputCodes.SHUTDOWN:
+                    # call helper function to save session
                     return
-
-                case InputCodes.STOP:
+                case InputCodes.SKIP:
                     # STOP means to start going another level deep
                     # make the user select what directory to further investigate
+                    pass
+                case InputCodes.PAUSE:
+                    # STOP means to start going another level deep
+                    # make the user select what directory to further investigate
+                    pass
+                case InputCodes.SELECTOR:
+                    # do not analise a certain subdirectory
                     pass
 
             iter_links = iter(self.website_fs.filter_nodes(lambda x: self.website_fs.depth(x) == depth))

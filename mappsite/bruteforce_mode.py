@@ -2,6 +2,7 @@ from base_class import *
 from helpers import *
 import string
 
+
 class BruteforceScan(WrapperScan):
     PATH_LIMIT = 20
     CHAR_SET = list(string.ascii_lowercase + string.ascii_uppercase + string.digits) \
@@ -16,6 +17,9 @@ class BruteforceScan(WrapperScan):
         else:
             for char in self.CHAR_SET:
                 self.gen_list(paths_list, length - 1, partial_string + char)
+
+    def handle_user_input(self):
+        pass
 
     def bruteforce_attack(self, parent, paths_list: [str], depth):
         if depth == self.PATH_LIMIT:
@@ -53,6 +57,6 @@ class BruteforceScan(WrapperScan):
             stop_flag = thr.Event()
             for url in url_list:
                 futures.append(bruteforce_pool.submit(self.bruteforce_attack, url, paths_list, 0))
-            action = handle_user_input(futures, stop_flag)
+            action = self.handle_user_input(futures, stop_flag)
             url_list = list(self.website_fs.filter_nodes(lambda x: self.website_fs.depth(x) == depth))
             depth += 1

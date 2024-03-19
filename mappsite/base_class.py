@@ -41,13 +41,8 @@ class WrapperScan:
         #         print(e)
         #         raise SystemExit
 
-    def extract_from_link(self):
-        pass
-
-    def is_same_domain(self):
-        pass
-
-    def fast_scan(self):
+    def handle_user_input(self):
+        # selector for mode and website with parameters
         pass
 
     def __del__(self):

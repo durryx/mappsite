@@ -8,10 +8,12 @@ import enum
 
 
 class InputCodes(enum.Enum):
-    STOP = enum.auto()
+    # input codes to signal the scanning function what to do
+    SKIP = enum.auto()
     PAUSE = enum.auto()
     SHUTDOWN = enum.auto()
     CONTINUE = enum.auto()
+    SELECTOR = enum.auto()
 
 
 def test_connection(website: str, dir_string: str):
@@ -49,10 +51,12 @@ def test_connection(website: str, dir_string: str):
         temp_tree.create_node(resp.url, resp.url, parent=chain)
         chain = resp.url
 
+    # return if scan was successful and eventually the redirections tree
     return True, temp_tree
 
 
 def recursive_cat(website_fs: tr.Tree, node: tr.Node, link: str) -> str:
+    # retrieve complete link given a specific node
     if node.is_root():
         return link
     else:
@@ -64,19 +68,6 @@ def recursive_cat(website_fs: tr.Tree, node: tr.Node, link: str) -> str:
 
 def link_cat(website_fs: tr.Tree, node: tr.Node) -> str:
     return recursive_cat(website_fs, node, '') + node.tag
-
-
-def handle_user_input(thread_pool: [th.Future], stop_flag: thr.Event):
-
-    one_thread_check = lambda proc: True if (proc.done()) else False
-
-    while True:
-        # user input and output - use ncurses?
-        # stopping thread
-        stop_flag.set()
-
-        if all(map(one_thread_check, thread_pool)):
-            return InputCodes.CONTINUE
 
 
 def tree_append(website_fs: tr.Tree, parent: tr.Node, *args):

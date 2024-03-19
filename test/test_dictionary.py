@@ -18,7 +18,7 @@ class TestDictionary(unittest.TestCase):
         pass
 
     def test_load_batch(self):
-        word = mappsite.dictionary_mode.next_word("../dictionaries/wordlist_test.txt")
+        word = mappsite.dictionary_mode.next_word("dictionaries/wordlist_test.txt")
         print(next(word) + next(word) + next(word))
 
     def test_dictionary_attack(self):
@@ -32,16 +32,16 @@ class TestDictionary(unittest.TestCase):
 
         pool = th.ThreadPoolExecutor(max_workers=5)
         pool.submit(
-            self.DictionaryScan.dictionary_attack, node, "../dictionaries/wordlist_test.txt", stop_flag
+            self.DictionaryScan.dictionary_attack, node, "dictionaries/wordlist_test.txt", stop_flag
         )
-        time.sleep(1)
+        time.sleep(2)
         stop_flag.set()
         # with stop_flag_lock:
         #     stop_flag.value = 1
         tree.show()
 
     def test_dictionary_mode(self):
-        # self.DictionaryScan.dictionary_mode("../dictionaries/wordlist_test.txt")
+        self.DictionaryScan.dictionary_mode("dictionaries/wordlist_test.txt")
         pass
 
 
