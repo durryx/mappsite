@@ -18,6 +18,7 @@ Do whatever you want but always test your functions when commiting. :-)
 - [ ] `BruteforceScan` complete refactor to use `handle_user_input`
 - [ ] fast mode with BeautifulSoup && (partial) standalone BeautifulSoup website crawler [implementation example](https://morioh.com/p/f346243ef56e)
 - [ ] store result in file (after ^C)
+- [ ] is threelib thread-safe for our purpose? If not implement thread-safe three library
 - [ ] command line options with [argparse](https://realpython.com/command-line-interfaces-python-argparse/) [link2](https://towardsdatascience.com/a-simple-guide-to-command-line-arguments-with-argparse-6824c30ab1c3)
 - [ ] simple UI with [prompt_toolkit](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html) & [link2](https://github.com/pavdmyt/yaspin?tab=readme-ov-file)
 - [ ] working progress bar with `prompt_toolkit` (ask on stackoverflow?)
