@@ -21,7 +21,6 @@ class TestFastScan(unittest.TestCase):
         print(urls)
 
     def test_add_link_to_tree(self):
-
         pass
 
     def test_fast_scan_attack(self):

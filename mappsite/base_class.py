@@ -24,6 +24,7 @@ class WrapperScan:
     MAX_THRD = 10
     MAX_TIME = 2
     total_requests = Counter()
+    requests_rate = 0
 
     def __init__(self, website: str):
         sys.setrecursionlimit(5000)
@@ -43,6 +44,7 @@ class WrapperScan:
 
     def handle_user_input(self):
         # selector for mode and website with parameters
+        # manage mixed modes (hybrid attacks)
         pass
 
     def __del__(self):
