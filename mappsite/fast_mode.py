@@ -44,10 +44,12 @@ class FastScan(WrapperScan):
     def is_same_domain(self, link: str):
         i = 0
         for x in range(links):
-            if urlDaAcchiappare == links[i]:
-                link[i] = link[i][0: len(urlDaAcchiappare)]
-                i += 1
-                return
+            for a in range(len(urlDaAcchiappare)):
+                
+                if urlDaAcchiappare == links[i]:
+                    link[i] = link[i][0: len(urlDaAcchiappare)]
+                    i += 1
+                    return
             else:
                 del links[i]
                 i += 1
