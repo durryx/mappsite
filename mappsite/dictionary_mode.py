@@ -96,7 +96,6 @@ class DictionaryScan(WrapperScan):
         # create parent class with function to handle actions and other constructors/destructors
         match command:
             case InputCodes.CONTINUE:
-                # print going another level deep
                 pass
             case InputCodes.SHUTDOWN:
                 # call helper function to save session
@@ -154,7 +153,7 @@ class DictionaryScan(WrapperScan):
         iter_links = [self.website_fs.root]
         # initialize variables with UI
         # auto mode
-        # 
+        #
         # dictionaries to be used
         # max timeout
         while True:
